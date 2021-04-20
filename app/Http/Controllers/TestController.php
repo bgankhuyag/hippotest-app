@@ -33,10 +33,14 @@ class TestController extends Controller
     if($validator->fails()){
       return response()->json(['errors' => $validator->errors(), 'success' => false]);
     }
-
     $user = User::firstWhere('id', auth()->id());
+    // dd($user);
     $user->increment('points', $request->points);
   }
 
+  public function leaderboard(Request $request) {
+    $users = User::orderBy('points', 'desc')->get(['name', 'email', 'points']);
+    return response()->json($users);
+  }
 
 }
