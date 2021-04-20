@@ -12,6 +12,6 @@ class Questions extends Model
     protected $table = 'questions';
 
     public function answers() {
-      return $this->hasMany(Questions::class);
+      return $this->hasMany(Answers::class);
     }
 }
