@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Questions;
 use App\Models\Answers;
+use App\Models\User;
+use Validator;
 
 class TestController extends Controller
 {
@@ -25,7 +27,15 @@ class TestController extends Controller
 
   // gets the points that the user has scored and add it to the total.
   public function submit(Request $request) {
-    dd(auth()->user());
+    $validator = Validator::make($request->all(), [
+      'points' => 'required|int|min: 0',
+    ]);
+    if($validator->fails()){
+      return response()->json(['errors' => $validator->errors(), 'success' => false]);
+    }
+
+    $user = User::firstWhere('id', auth()->id());
+    $user->increment('points', $request->points);
   }
 
 
