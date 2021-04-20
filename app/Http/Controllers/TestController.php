@@ -10,7 +10,7 @@ class TestController extends Controller
 {
     public function questions() {
       // dd('here');
-      $questions = Questions::with('answers')->get();
+      $questions = Questions::with('answers')->selectRaw('*')->get();
       return response()->json($questions);
     }
 }
