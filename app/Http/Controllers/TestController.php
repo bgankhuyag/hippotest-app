@@ -39,8 +39,18 @@ class TestController extends Controller
   }
 
   public function leaderboard(Request $request) {
-    $users = User::orderBy('points', 'desc')->get(['name', 'email', 'points']);
-    return response()->json($users);
+    // $users = User::orderBy('points', 'desc')->get(['name', 'email', 'points']);
+    DB::statement(DB::raw('set @row:=0'));
+    $users = User::orderBy('points', 'desc')->selectRaw('name, email, points, @row:=@row+1 as rank')->get();
+    DB::statement(DB::raw('set @row:=0'));
+    $user_rank = User::orderBy('points', 'desc')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->get();
+    // $position = $user_rank->search(function ($user, $key) {
+    //   return $user->id == auth()->id();
+    // });
+    $json = json_encode($user_rank);
+    $user_rank = json_decode($json);
+    $position = array_search(auth()->id(), array_column($user_rank, 'id'));
+    return response()->json(['data' => $users, 'user' => $user_rank[$position]]);
   }
 
 }
