@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/questions/{category}', [TestController::class, 'questions'])->name('questions');
+Route::post('/categories', [TestController::class, 'categories'])->name('categories');
