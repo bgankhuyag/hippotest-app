@@ -66,10 +66,12 @@ class TestController extends Controller
     }
     $data['user'] = ['id' => auth()->id(), 'name' => auth()->user()->name];
     if ($position < $top) {
-      // array_push($data['user'], 'array' => 'top');
       $data['user']['array'] = 'top';
+    } else if ($position >= sizeof($users)-2) {
+      $data['user']['array'] = 'last';
+    } else {
+      $data['user']['array'] = 'user_rank';
     }
-
     return response()->json($data);
   }
 
