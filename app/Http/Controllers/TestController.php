@@ -18,7 +18,7 @@ class TestController extends Controller
     // dd($category);
     // $questions = Questions::where('category', $category)->with('answers:id,questions_id,answer,correct')->inRandomOrder()->limit(10)->get(['id', 'question']);
     $questions = DummyQuestions::where('category', $category)->with('answers:id,questions_id,answer,correct')->inRandomOrder()->limit(10)->get(['id', 'question', 'category']);
-    // $questions = Questions::where('category', $category)->with('answers:questions_id,answer,correct')->orderBy(DB::raw('RAND()'))->take(10)->get(['id', 'question', 'category']);
+    // $questions = DummyQuestions::where('category', $category)->with('answers:questions_id,answer,correct')->orderBy(DB::raw('RAND()'))->take(10)->get(['id', 'question', 'category']);
     return response()->json($questions);
   }
 
