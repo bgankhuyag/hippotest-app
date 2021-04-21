@@ -39,16 +39,31 @@ class TestController extends Controller
 
   public function leaderboard(Request $request) {
     DB::statement(DB::raw('set @row:=0'));
-    $users = User::orderBy('points', 'desc')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->take(2)->get();
-    // DB::statement(DB::raw('set @row:=0'));
-    // $user_rank = User::orderBy('points', 'desc')->selectRaw('id, name, points, @row:=@row+1 as rank')->get();
+    $users = User::orderByDesc('points')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->get();
     $json = json_encode($users);
-    $users = json_decode($json);
+    $users = json_decode($json, true);
     $position = array_search(auth()->id(), array_column($users, 'id'));
-    if ($position == 0) {
-
+    $top = 5;
+    $data = ['top' => array_slice($users, 0, $top)];
+    if (sizeof($users)-1 > $top) {
+      $data['last'] = array_slice($users, -2);
+    } else if (sizeof($users) > $top) {
+      $data['last'] = array_slice($users, -1);
     }
-    return response()->json(['data' => array_slice($users, 0, 10), 'user' => array_slice($users, $position-1, $position+2)]);
+    if ($position >= $top && $position < sizeof($users)-2) {
+      $start = $position-1;
+      $size = 3;
+      if ($position == $top) {
+        $start++;
+        $size--;
+      }
+      if ($position+1 == sizeof($users)-2) {
+        $size--;
+      }
+      $data['user_rank'] = array_slice($users, $start, $size);
+    }
+    $data['user'] = ['id' => auth()->id(), 'name' => auth()->user()->name];
+    return response()->json($data);
   }
 
 }
