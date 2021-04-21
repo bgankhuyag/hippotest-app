@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Questions;
 use App\Models\Answers;
+use App\Models\DummyQuestions;
+use App\Models\DummyAnswers;
 use App\Models\User;
 use Validator;
 
@@ -43,7 +45,7 @@ class TestController extends Controller
     $json = json_encode($users);
     $users = json_decode($json, true);
     $position = array_search(auth()->id(), array_column($users, 'id'));
-    $top = 5;
+    $top = 10;
     $data = ['top' => array_slice($users, 0, $top)];
     if (sizeof($users)-1 > $top) {
       $data['last'] = array_slice($users, -2);
@@ -63,6 +65,11 @@ class TestController extends Controller
       $data['user_rank'] = array_slice($users, $start, $size);
     }
     $data['user'] = ['id' => auth()->id(), 'name' => auth()->user()->name];
+    if ($position < $top) {
+      // array_push($data['user'], 'array' => 'top');
+      $data['user']['array'] = 'top';
+    }
+
     return response()->json($data);
   }
 
