@@ -44,7 +44,7 @@ class TestController extends Controller
   // get the user with their rank and the user above and below them.
   public function leaderboard(Request $request) {
     DB::statement(DB::raw('set @row:=0'));
-    $users = User::orderByDesc('points')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->get();
+    $users = User::orderByDesc('points')->orderBy('created_at')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->get();
     $json = json_encode($users);
     $users = json_decode($json, true);
     $position = array_search(auth()->id(), array_column($users, 'id'));

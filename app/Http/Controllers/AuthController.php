@@ -54,19 +54,16 @@ class AuthController extends Controller
           return response()->json(['error' => $validator->errors()->toJson(), 'success' => false], 400);
       }
 
-      // $user = User::create(array_merge(
-      //             $validator->validated(),
-      //             ['password' => bcrypt($request->password)],
-      //         ));
-      $user = new User;
-      $user->name = $request->name;
-      $user->email = $request->email;
-      $user->register = $request->register;
-      $user->password = bcrypt($request->password);
-      $user->points = 0;
-      $user->save();
+      $user = User::create([
+          'name' => $request->name,
+          'email' => $request->email,
+          'register' => $request->register,
+          'points' => 0,
+          'password' => bcrypt($request->password),
+      ]);
 
       return response()->json([
+        'success' => true,
         'message' => 'User successfully registered',
         'user' => $user
       ], 201);
