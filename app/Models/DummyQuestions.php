@@ -12,6 +12,6 @@ class DummyQuestions extends Model
     protected $table = 'dummy_questions';
 
     public function answers() {
-      return $this->hasMany(DummyAnswers::class);
+      return $this->hasMany(DummyAnswers::class, 'questions_id');
     }
 }

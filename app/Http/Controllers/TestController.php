@@ -16,7 +16,8 @@ class TestController extends Controller
   // get the questions in specified category
   public function questions(Request $request, $category) {
     // dd($category);
-    $questions = Questions::where('category', $category)->with('answers:id,questions_id,answer,correct')->inRandomOrder()->limit(10)->get(['id', 'question']);
+    // $questions = Questions::where('category', $category)->with('answers:id,questions_id,answer,correct')->inRandomOrder()->limit(10)->get(['id', 'question']);
+    $questions = DummyQuestions::where('category', $category)->with('answers:id,questions_id,answer,correct')->inRandomOrder()->limit(10)->get(['id', 'question', 'category']);
     // $questions = Questions::where('category', $category)->with('answers:questions_id,answer,correct')->orderBy(DB::raw('RAND()'))->take(10)->get(['id', 'question', 'category']);
     return response()->json($questions);
   }
@@ -39,13 +40,15 @@ class TestController extends Controller
     $user->increment('points', $request->points);
   }
 
+  // create a leaderboard of users with the higest scores and the lowest scores.
+  // get the user with their rank and the user above and below them.
   public function leaderboard(Request $request) {
     DB::statement(DB::raw('set @row:=0'));
     $users = User::orderByDesc('points')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->get();
     $json = json_encode($users);
     $users = json_decode($json, true);
     $position = array_search(auth()->id(), array_column($users, 'id'));
-    $top = 10;
+    $top = 5;
     $data = ['top' => array_slice($users, 0, $top)];
     if (sizeof($users)-1 > $top) {
       $data['last'] = array_slice($users, -2);
