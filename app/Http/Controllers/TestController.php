@@ -43,7 +43,7 @@ class TestController extends Controller
     DB::statement(DB::raw('set @row:=0'));
     $users = User::orderBy('points', 'desc')->selectRaw('name, email, points, @row:=@row+1 as rank')->get();
     DB::statement(DB::raw('set @row:=0'));
-    $user_rank = User::orderBy('points', 'desc')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->get();
+    $user_rank = User::orderBy('points', 'desc')->selectRaw('id, name, points, @row:=@row+1 as rank')->get();
     // $position = $user_rank->search(function ($user, $key) {
     //   return $user->id == auth()->id();
     // });
