@@ -24,19 +24,10 @@ class Authenticate extends Middleware
     // }
 
   public function handle($request, Closure $next) {
-    // dd(Auth::user());
     try {
-      // $response = $next($request);
-      $request->headers->set('Authorization', JWTAuth::getToken());
-      // $headers = apache_request_headers(); //get header
-      // $request->headers->set('Authorization', $headers['authorization']);// set header in request
-      // dd(auth()->check());
-
-    // dd(JWTAuth::getToken());
-    // dd('here');
+      // $request->headers->set('Authorization', JWTAuth::getToken());
       $user = JWTAuth::parseToken()->authenticate();
     } catch (Exception $e) {
-      // dd('here');
       if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
         return response()->json(['error' => 'Token is Invalid', 'success' => false]);
       } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
