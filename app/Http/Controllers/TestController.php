@@ -15,7 +15,7 @@ class TestController extends Controller
   public function questions(Request $request, $category) {
     // dd($category);
     $questions = Questions::where('category', $category)->with('answers:id,questions_id,answer,correct')->inRandomOrder()->limit(10)->get(['id', 'question']);
-    // $questions = Questions::where('category', $category)->with('answers:questions_id,answer,correct')->orderBy(DB::raw('RAND()'))->take(2)->get(['id', 'question', 'category']);
+    // $questions = Questions::where('category', $category)->with('answers:questions_id,answer,correct')->orderBy(DB::raw('RAND()'))->take(10)->get(['id', 'question', 'category']);
     return response()->json($questions);
   }
 
@@ -34,23 +34,21 @@ class TestController extends Controller
       return response()->json(['errors' => $validator->errors(), 'success' => false]);
     }
     $user = User::firstWhere('id', auth()->id());
-    // dd($user);
     $user->increment('points', $request->points);
   }
 
   public function leaderboard(Request $request) {
-    // $users = User::orderBy('points', 'desc')->get(['name', 'email', 'points']);
     DB::statement(DB::raw('set @row:=0'));
-    $users = User::orderBy('points', 'desc')->selectRaw('name, email, points, @row:=@row+1 as rank')->get();
-    DB::statement(DB::raw('set @row:=0'));
-    $user_rank = User::orderBy('points', 'desc')->selectRaw('id, name, points, @row:=@row+1 as rank')->get();
-    // $position = $user_rank->search(function ($user, $key) {
-    //   return $user->id == auth()->id();
-    // });
-    $json = json_encode($user_rank);
-    $user_rank = json_decode($json);
-    $position = array_search(auth()->id(), array_column($user_rank, 'id'));
-    return response()->json(['data' => $users, 'user' => $user_rank[$position]]);
+    $users = User::orderBy('points', 'desc')->selectRaw('id, name, email, points, @row:=@row+1 as rank')->take(2)->get();
+    // DB::statement(DB::raw('set @row:=0'));
+    // $user_rank = User::orderBy('points', 'desc')->selectRaw('id, name, points, @row:=@row+1 as rank')->get();
+    $json = json_encode($users);
+    $users = json_decode($json);
+    $position = array_search(auth()->id(), array_column($users, 'id'));
+    if ($position == 0) {
+
+    }
+    return response()->json(['data' => array_slice($users, 0, 10), 'user' => array_slice($users, $position-1, $position+2)]);
   }
 
 }
