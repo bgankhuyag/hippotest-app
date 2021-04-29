@@ -32,10 +32,10 @@ Route::group([
     // Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 
-Route::post('/questions/{category}', [TestController::class, 'questions'])->name('questions');
 Route::group([
   'middleware' => 'auth:api'
 ], function () {
+  Route::post('/questions/{category}', [TestController::class, 'questions'])->name('questions');
   Route::post('/categories', [TestController::class, 'categories'])->name('categories');
   Route::post('/submit', [TestController::class, 'submit']);
   Route::post('/leaderboard', [TestController::class, 'leaderboard']);
