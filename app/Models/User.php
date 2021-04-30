@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable implements JWTSubject
         'first_name',
         'last_name',
         'birth_date',
+        'student_id',
         'email',
         'register',
         'points',
@@ -46,6 +48,14 @@ class User extends Authenticatable implements JWTSubject
       'birth_date' => 'date:Y-m-d',
       'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = ['student_id'];
+
+    public function getStudentIdAttribute() {
+      if ($this->attributes['student_id'] != null) {
+        return Storage::disk('s3')->url($this->attributes['student_id']);
+      }
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

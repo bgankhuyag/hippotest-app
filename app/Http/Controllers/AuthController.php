@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -52,17 +53,21 @@ class AuthController extends Controller
           'birth_date' => 'date_format:Y-m-d|after_or_equal:'.$validDate,
           'register' => 'required|regex:/^[A-Z]{2,2}[0-9]{8,8}$/|unique:users',
           'password' => 'required|string|confirmed|min:6',
+          'student_id' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
       ]);
       if($validator->fails()){
           return response()->json(['error' => $validator->errors()->toJson(), 'success' => false], 400);
       }
-
+      $file = $request->student_id;
+      $imageName = time() . $file->getClientOriginalName();
+      Storage::disk('s3')->put($imageName, file_get_contents($file));
       $user = User::create([
           'first_name' => $request->first_name,
           'last_name' => $request->last_name,
           'birth_date' => $request->birth_date,
           'email' => $request->email,
           'register' => $request->register,
+          'student_id' => $imageName,
           'points' => 0,
           'password' => bcrypt($request->password),
       ]);
