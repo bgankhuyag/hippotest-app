@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
-
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -44,9 +44,12 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request) {
+      $validDate = date('1996-01-01');
       $validator = Validator::make($request->all(), [
-          'name' => 'required|string|between:2,100',
+          'first_name' => 'required|string|between:2,100',
+          'last_name' => 'required|string|between:2,100',
           'email' => 'required|string|email|max:100|unique:users',
+          'birth_date' => 'date_format:Y-m-d|after_or_equal:'.$validDate,
           'register' => 'required|regex:/^[A-Z]{2,2}[0-9]{8,8}$/|unique:users',
           'password' => 'required|string|confirmed|min:6',
       ]);
@@ -55,7 +58,9 @@ class AuthController extends Controller
       }
 
       $user = User::create([
-          'name' => $request->name,
+          'first_name' => $request->first_name,
+          'last_name' => $request->last_name,
+          'birth_date' => $request->birth_date,
           'email' => $request->email,
           'register' => $request->register,
           'points' => 0,
