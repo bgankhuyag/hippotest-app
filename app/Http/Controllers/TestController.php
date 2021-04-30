@@ -39,6 +39,7 @@ class TestController extends Controller
     }
     $user = User::firstWhere('id', auth()->id());
     $user->increment('points', $request->points);
+    return response()->json(['success' => true]);
   }
 
   // create a leaderboard of users with the higest scores and the lowest scores.
