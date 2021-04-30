@@ -68,7 +68,7 @@ class TestController extends Controller
       }
       $data['user_rank'] = array_slice($users, $start, $size);
     }
-    $data['user'] = ['id' => auth()->id(), 'name' => auth()->user()->name];
+    $data['user'] = ['id' => auth()->id(), 'name' => auth()->user()->first_name];
     if ($position < $top) {
       $data['user']['array'] = 'top';
     } else if ($position >= sizeof($users)-2) {
