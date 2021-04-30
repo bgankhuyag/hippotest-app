@@ -45,7 +45,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request) {
-      $validDate = date('1996-01-01');
+      $validDate = date('1998-01-01');
       $validator = Validator::make($request->all(), [
           'first_name' => 'required|string|between:2,100',
           'last_name' => 'required|string|between:2,100',
