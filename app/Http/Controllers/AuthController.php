@@ -27,7 +27,7 @@ class AuthController extends Controller
      */
     public function login(Request $request){
     	$validator = Validator::make($request->all(), [
-          'email' => 'required|email',
+          'phone' => 'required|integer|min:10000000|regex:/^[0-9]{8}$/',
           'password' => 'required|string|min:6',
       ]);
       if ($validator->fails()) {
@@ -49,9 +49,10 @@ class AuthController extends Controller
       $validator = Validator::make($request->all(), [
           'first_name' => 'required|string|between:2,100',
           'last_name' => 'required|string|between:2,100',
-          'email' => 'required|string|email|max:100|unique:users',
+          // 'email' => 'required|string|email|max:100|unique:users',
           'birth_date' => 'date_format:Y-m-d|after_or_equal:'.$validDate,
           'register' => 'required|regex:/^[A-Z]{2,2}[0-9]{8,8}$/|unique:users',
+          'phone' => 'required|integer|min:10000000|regex:/^[0-9]{8}$/|unique:users',
           'password' => 'required|string|confirmed|min:6',
           'student_id' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
       ]);
@@ -65,7 +66,8 @@ class AuthController extends Controller
           'first_name' => $request->first_name,
           'last_name' => $request->last_name,
           'birth_date' => $request->birth_date,
-          'email' => $request->email,
+          // 'email' => $request->email,
+          'phone' => $request->phone,
           'register' => $request->register,
           'student_id' => $imageName,
           'points' => 0,
